@@ -1,4 +1,5 @@
 ﻿using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 public class MainPage : ContentPage
@@ -45,7 +46,6 @@ public class MainPage : ContentPage
         callButton.Clicked += OnCall;
         this.Content = panel;
 
-
     }
 
     private void OnTranslate(object sender, EventArgs e) {
@@ -70,7 +70,23 @@ public class MainPage : ContentPage
         "Yes",
         "No"))
         {
-            // TODO: dial the phone
+            try
+            {
+                PhoneDialer.Open(translatedNumber);
+            }
+            catch (ArgumentNullException)
+            {
+                await DisplayAlert("Unable to dial", "Phone number was not valid.", "OK");
+            }
+            catch (FeatureNotSupportedException)
+            {
+                await DisplayAlert("Unable to dial", "Phone dialing not supported.", "OK");
+            }
+            catch (Exception)
+            {
+                // Other error has occurred.
+                await DisplayAlert("Unable to dial", "Phone dialing failed.", "OK");
+            }
         }
     }
 }
